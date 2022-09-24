@@ -1,3 +1,4 @@
+import 'package:carely/services/firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 
 import 'package:firebase_auth/firebase_auth.dart';
@@ -49,13 +50,14 @@ class Auth {
     try {
       await FirebaseAuth.instance
           .signInWithEmailAndPassword(email: mail, password: pwd);
+
       return null;
     } on FirebaseAuthException catch (ex) {
       return "${ex.message}";
     }
   }
 
-  Future<UserCredential> signInWithGoogle() async {
+  Future signInWithGoogle() async {
     // Trigger the authentication flow
     final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
 
@@ -68,8 +70,11 @@ class Auth {
       accessToken: googleAuth?.accessToken,
       idToken: googleAuth?.idToken,
     );
+    await FirebaseAuth.instance.signInWithCredential(credential);
 
     // Once signed in, return the UserCredential
-    return await FirebaseAuth.instance.signInWithCredential(credential);
+    Firestore _firestore = Firestore();
+    await _firestore.creatPr(user.currentUser!.uid);
+    return FirebaseAuth.instance.currentUser;
   }
 }

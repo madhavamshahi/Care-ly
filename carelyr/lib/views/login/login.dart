@@ -8,8 +8,6 @@ class LoginView extends StatefulWidget {
 }
 
 class _LoginViewState extends State<LoginView> {
-  String major = "Maths";
-  String school = "Texas Christian University";
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -59,10 +57,7 @@ class _LoginViewState extends State<LoginView> {
                       ),
                     ),
                     SizedBox(height: 35),
-                    GoogleSignInButton(
-                      major: major,
-                      school: school,
-                    ),
+                    GoogleSignInButton(),
                     SizedBox(height: 200),
                   ],
                 ),

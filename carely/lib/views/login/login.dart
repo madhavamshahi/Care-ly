@@ -8,8 +8,6 @@ class LoginView extends StatefulWidget {
 }
 
 class _LoginViewState extends State<LoginView> {
-  String major = "Maths";
-  String school = "Texas Christian University";
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -26,7 +24,7 @@ class _LoginViewState extends State<LoginView> {
                   children: [
                     SizedBox(height: 100),
                     Text(
-                      'Ed-Buddy',
+                      'Care-ly',
                       style: GoogleFonts.rubik(
                         textStyle: TextStyle(
                           fontSize: 32,
@@ -36,7 +34,7 @@ class _LoginViewState extends State<LoginView> {
                     ),
                     SizedBox(height: 10),
                     Text(
-                      'Your partner in studies',
+                      "We're in this together ❤️.",
                       style: GoogleFonts.josefinSans(
                         textStyle: TextStyle(
                           fontSize: 25,
@@ -59,10 +57,7 @@ class _LoginViewState extends State<LoginView> {
                       ),
                     ),
                     SizedBox(height: 35),
-                    GoogleSignInButton(
-                      major: major,
-                      school: school,
-                    ),
+                    GoogleSignInButton(),
                     SizedBox(height: 200),
                   ],
                 ),

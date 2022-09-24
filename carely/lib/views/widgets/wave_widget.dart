@@ -17,8 +17,7 @@ Widget waveAnimation({
           config: config,
           backgroundColor: Colors.white,
           size: const Size(double.infinity, double.infinity),
-          waveAmplitude: 2
-      ),
+          waveAmplitude: 2),
     ),
   );
 }

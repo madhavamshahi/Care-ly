@@ -45,7 +45,7 @@ class CheckInBox extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Amanda, Nurse',
+                    'Adam, Age 24',
                     style: GoogleFonts.josefinSans(
                       textStyle: TextStyle(
                         fontSize: 20,

@@ -1,19 +1,20 @@
+import 'package:carelyR/services/firestore.dart';
 import 'package:carelyR/views/widgets/userProfileView.dart';
-
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:carelyR/views/widgets/check_in_box.dart';
 import 'package:flutter/material.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
-
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-
+import 'package:qr/qr.dart';
+import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shrink_sidemenu/shrink_sidemenu.dart';
 import 'package:line_awesome_flutter/line_awesome_flutter.dart';
-
+import 'package:qr_flutter/qr_flutter.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
-
-import '../../ui/login/components/register.component.dart';
+import '../registration/registrationView.dart';
 import '../widgets/updates_tile.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Home extends StatefulWidget {
   @override
@@ -65,51 +66,75 @@ class _HomeState extends State<Home> {
       TextStyle(fontSize: 30, fontWeight: FontWeight.w600);
   List<Widget> _widgetOptions = <Widget>[
     SingleChildScrollView(
-      child: Container(
-        margin: EdgeInsets.all(25),
-        child: Column(
-          children: [
-            Builder(builder: ((context) {
-              return SizedBox(height: MediaQuery.of(context).size.height / 6.5);
-            })),
-            Image.asset(
-              "assets/images/qr.png",
-              height: 250,
-            ),
-            SizedBox(height: 20),
-            Builder(
-              builder: ((context) {
-                return GestureDetector(
-                  onTap: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) =>
-                                RegisterComponent(title: "Registratiuon")));
-                  },
-                  child: Center(
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        Text(
-                          "Scan Code",
-                          style: TextStyle(
-                            letterSpacing: 1.7,
-                            fontFamily: "QuickSand",
-                            fontSize: 20.5,
-                            color: Color(0xFF1a2228),
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
-                      ],
+      child: FutureBuilder<DocumentSnapshot>(
+          future:
+              Firestore().getProfile2(FirebaseAuth.instance.currentUser!.uid),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return Center(child: CircularProgressIndicator());
+            }
+
+            if (snapshot.hasError) {
+              return Center(
+                child: Text(snapshot.error.toString()),
+              );
+            }
+            if (snapshot.hasData) {
+              Map data = snapshot.data!.data() as Map;
+
+              return Container(
+                margin: EdgeInsets.all(25),
+                child: Column(
+                  children: [
+                    Builder(builder: ((context) {
+                      return SizedBox(
+                          height: MediaQuery.of(context).size.height / 6.5);
+                    })),
+                    QrImage(
+                      data: data.toString(),
+                      version: QrVersions.auto,
+                      size: 280.0,
                     ),
-                  ),
-                );
-              }),
-            ),
-          ],
-        ),
-      ),
+                    SizedBox(height: 20),
+                    Builder(
+                      builder: ((context) {
+                        return GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => RegisterComponent(
+                                        title: "Registratiuon")));
+                          },
+                          child: Center(
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: [
+                                Flexible(
+                                  child: Text(
+                                    "Scan code from patient's phone to check in.",
+                                    maxLines: 3,
+                                    style: TextStyle(
+                                      letterSpacing: 1.7,
+                                      fontFamily: "QuickSand",
+                                      fontSize: 20.5,
+                                      color: Color(0xFF1a2228),
+                                      fontWeight: FontWeight.w700,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      }),
+                    ),
+                  ],
+                ),
+              );
+            }
+            return Center(child: CircularProgressIndicator());
+          }),
     ),
     SingleChildScrollView(
       child: Column(

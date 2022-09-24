@@ -59,9 +59,17 @@ dev_dependencies:
   font_awesome_flutter: ^10.1.0
   google_sign_in: ^5.4.2
   getwidget: ^3.0.1
+  
+  flutter_svg: 1.0.3
+  flutter_barcode_scanner: ^2.0.0
+
+  qr_flutter: ^4.0.0
+
+
   firebase_auth: ^3.6.4
   cloud_firestore: ^3.4.5
   expansion_tile_card: ^2.0.0
+  wave: 0.2.0
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

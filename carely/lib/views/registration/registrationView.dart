@@ -1,9 +1,15 @@
+import 'package:carely/models/nurse.dart';
+import 'package:carely/models/patient.dart';
+import 'package:carely/services/firestore.dart';
+import 'package:carely/views/home/home.dart';
 import 'package:flutter/material.dart';
-import '../shared/data/countries.dart';
-import '../shared/widgets/verticalSpacing.widget.dart';
-import '../shared/widgets/wave.widget.dart';
+import '../widgets/countries.dart';
+import '../widgets/verticalSpacing.widget.dart';
+import '../widgets/widgets.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:wave/config.dart';
+
+import 'package:firebase_auth/firebase_auth.dart';
 
 class RegisterComponent extends StatefulWidget {
   const RegisterComponent({Key? key, required this.title}) : super(key: key);
@@ -20,7 +26,6 @@ class _RegisterComponentState extends State<RegisterComponent> {
   final TextEditingController phoneNumberController = TextEditingController();
   final TextEditingController nameController = TextEditingController();
 
-  final TextEditingController work = TextEditingController();
   final TextEditingController countryFlagController =
       TextEditingController(text: 'US');
   String selectValue = 'US';
@@ -105,9 +110,9 @@ class _RegisterComponentState extends State<RegisterComponent> {
               width: 20,
             ),
             Text(
-              'Information',
+              'Please fill in your details',
               style: TextStyle(
-                fontSize: 28,
+                fontSize: 24,
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -125,7 +130,6 @@ class _RegisterComponentState extends State<RegisterComponent> {
           verticalSpacing(15),
           firstNameInput(),
           verticalSpacing(15),
-          lastNameInput(),
           verticalSpacing(15),
         ],
       ),
@@ -138,7 +142,7 @@ class _RegisterComponentState extends State<RegisterComponent> {
       child: TextFormField(
         controller: nameController,
         decoration: InputDecoration(
-          labelText: 'First Name',
+          labelText: 'Name',
           labelStyle: const TextStyle(
             fontSize: 20,
           ),
@@ -152,34 +156,6 @@ class _RegisterComponentState extends State<RegisterComponent> {
         validator: (value) {
           if (value!.isEmpty) {
             return 'Please enter your first name';
-          }
-          return null;
-        },
-        keyboardType: TextInputType.text,
-      ),
-    );
-  }
-
-  Widget lastNameInput() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20.0),
-      child: TextFormField(
-        controller: work,
-        decoration: InputDecoration(
-          labelText: 'Last Name',
-          labelStyle: const TextStyle(
-            fontSize: 20,
-          ),
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(8),
-          ),
-        ),
-        style: const TextStyle(
-          fontSize: 20,
-        ),
-        validator: (value) {
-          if (value!.isEmpty) {
-            return 'Please enter your last name';
           }
           return null;
         },
@@ -289,7 +265,7 @@ class _RegisterComponentState extends State<RegisterComponent> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: const [
             Text(
-              'Send Code',
+              'Done',
               style: TextStyle(
                 color: Colors.white,
                 fontSize: 20,
@@ -298,35 +274,31 @@ class _RegisterComponentState extends State<RegisterComponent> {
           ],
         ),
       ),
-      onTap: () {
+      onTap: () async {
         if (_formKey.currentState!.validate() &&
             _phoneKey.currentState!.validate()) {
-          // Navigator.push(
-          //     context,
-          //     PageRouteBuilder(
-          //       pageBuilder: (context, animation, secondaryAnimation) =>
-          //           CodeVerificationComponent(
-          //               phoneNumber: phoneNumberController.text),
-          //       transitionsBuilder:
-          //           (context, animation, secondaryAnimation, child) {
-          //         const begin = Offset(0.0, 1.0);
-          //         const end = Offset.zero;
-          //         const curve = Curves.ease;
+          Firestore _firestore = Firestore();
 
-          //         var tween = Tween(begin: begin, end: end)
-          //             .chain(CurveTween(curve: curve));
-
-          //         return SlideTransition(
-          //           position: animation.drive(tween),
-          //           child: child,
-          //         );
-          //       },
-          //     ));
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('SMS Code sent'),
+          await _firestore.addProfile(
+            patient: Patient.fromJson(
+              {
+                "name": nameController.text,
+                "phn": phoneNumberController.text,
+                "email": FirebaseAuth.instance.currentUser!.email,
+                "uid": FirebaseAuth.instance.currentUser!.uid,
+              },
             ),
           );
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Account Created'),
+            ),
+          );
+
+          Navigator.pop(context);
+
+          Navigator.push(
+              context, MaterialPageRoute(builder: (context) => Home()));
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(

@@ -1,4 +1,5 @@
 import 'package:carely/views/home/home.dart';
+import 'package:carely/views/registration/registrationView.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:carely/services/auth.dart';
@@ -7,12 +8,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:carely/services/services.dart';
 
 class GoogleSignInButton extends StatefulWidget {
-  final String major;
-  final String school;
-  GoogleSignInButton({
-    required this.major,
-    required this.school,
-  });
+  GoogleSignInButton();
   @override
   _GoogleSignInButtonState createState() => _GoogleSignInButtonState();
 }
@@ -44,7 +40,7 @@ class _GoogleSignInButtonState extends State<GoogleSignInButton> {
 
                 Auth auth = Auth();
 
-                UserCredential user = await auth.signInWithGoogle();
+                User user = await auth.signInWithGoogle();
 
                 setState(() {
                   _isSigningIn = false;
@@ -53,14 +49,31 @@ class _GoogleSignInButtonState extends State<GoogleSignInButton> {
                 Firestore firestore = Firestore();
 
                 if (user != null) {
-                  Navigator.pop(context);
+                  Firestore _fireStore = new Firestore();
+                  print('lodd');
+                  Map map =
+                      await _fireStore.getProfile(auth.user.currentUser!.uid);
+                  if (!(map.containsKey('phn'))) {
+                    Navigator.pop(context);
 
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => Home(),
-                    ),
-                  );
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => RegisterComponent(
+                          title: "re",
+                        ),
+                      ),
+                    );
+                  } else {
+                    Navigator.pop(context);
+
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => Home(),
+                      ),
+                    );
+                  }
                 }
               },
               child: Padding(
