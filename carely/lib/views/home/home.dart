@@ -1,9 +1,15 @@
+import 'package:carely/views/widgets/check_in_box.dart';
+import 'package:carely/views/widgets/userProfileView.dart';
 import 'package:flutter/material.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
+import 'package:google_fonts/google_fonts.dart';
 import 'package:shrink_sidemenu/shrink_sidemenu.dart';
+import 'package:line_awesome_flutter/line_awesome_flutter.dart';
+
+import '../widgets/updates_tile.dart';
 
 class Home extends StatefulWidget {
   @override
@@ -36,31 +42,102 @@ class _HomeState extends State<Home> {
   int _selectedIndex = 0;
   static const TextStyle optionStyle =
       TextStyle(fontSize: 30, fontWeight: FontWeight.w600);
-  static const List<Widget> _widgetOptions = <Widget>[
-    Center(
-      child: Text(
-        'Home',
-        style: optionStyle,
+  List<Widget> _widgetOptions = <Widget>[
+    SingleChildScrollView(
+      child: Container(
+        margin: EdgeInsets.all(25),
+        child: Column(
+          children: [
+            Builder(builder: ((context) {
+              return SizedBox(height: MediaQuery.of(context).size.height / 6.5);
+            })),
+            Image.asset(
+              "assets/images/qr.png",
+              height: 250,
+            ),
+            SizedBox(height: 20),
+            Container(
+              // padding: EdgeInsets.all(20.0),
+              height: 60,
+              margin: EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                color: Color(0xFF1a2228),
+                borderRadius: BorderRadius.all(Radius.circular(15.0)),
+              ),
+              child: Center(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    Text(
+                      "Scan Code",
+                      style: TextStyle(
+                        letterSpacing: 1.7,
+                        fontFamily: "QuickSand",
+                        fontSize: 17.5,
+                        color: Colors.white,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    Icon(
+                      LineAwesomeIcons.retro_camera,
+                      color: Colors.white,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     ),
-    Center(
-      child: Text(
-        'Likes',
-        style: optionStyle,
+    SingleChildScrollView(
+      child: Column(
+        children: [
+          SizedBox(
+            height: 60,
+          ),
+          Text(
+            'Check-ins',
+            style: GoogleFonts.josefinSans(
+              textStyle: TextStyle(
+                fontSize: 25,
+                color: Colors.black,
+              ),
+            ),
+          ),
+          SizedBox(
+            height: 50,
+          ),
+          Container(margin: EdgeInsets.all(15), child: CheckInBox()),
+        ],
       ),
     ),
-    Center(
-      child: Text(
-        'Search',
-        style: optionStyle,
+    SingleChildScrollView(
+      child: Column(
+        children: [
+          SizedBox(
+            height: 60,
+          ),
+          Text(
+            'Status Updates',
+            style: GoogleFonts.josefinSans(
+              textStyle: TextStyle(
+                fontSize: 25,
+                color: Colors.black,
+              ),
+            ),
+          ),
+          SizedBox(
+            height: 50,
+          ),
+          Container(
+            margin: EdgeInsets.all(15),
+            child: UpdatesBoxes(),
+          ),
+        ],
       ),
     ),
-    Center(
-      child: Text(
-        'Profile',
-        style: optionStyle,
-      ),
-    ),
+    UserProfileView()
   ];
 
   @override
@@ -69,7 +146,7 @@ class _HomeState extends State<Home> {
       key: _endSideMenuKey,
       type: SideMenuType.slide,
       menu: Padding(
-        padding: const EdgeInsets.only(left: 25.0),
+        padding: EdgeInsets.only(left: 25.0),
         child: buildMenu(),
       ),
       onChange: (_isOpened) {
@@ -77,17 +154,32 @@ class _HomeState extends State<Home> {
       },
       child: Scaffold(
         backgroundColor: Colors.white,
+        body: _widgetOptions.elementAt(_selectedIndex),
         appBar: AppBar(
-          elevation: 20,
+          centerTitle: true,
+          backgroundColor: Colors.white,
+          elevation: 0,
+          actions: <Widget>[
+            IconButton(
+              icon: Icon(
+                FontAwesomeIcons.userAstronaut,
+                color: Colors.black,
+              ),
+              onPressed: () {},
+            ),
+            SizedBox(
+              width: 20,
+            )
+          ],
           leading: GestureDetector(
-              onTap: () {
-                toggleMenu(true);
-              },
-              child: Icon(FontAwesomeIcons.bars)),
-          title: const Text('GoogleNavBar'),
-        ),
-        body: Center(
-          child: _widgetOptions.elementAt(_selectedIndex),
+            onTap: () {
+              toggleMenu(true);
+            },
+            child: Icon(
+              FontAwesomeIcons.bars,
+              color: Colors.black,
+            ),
+          ),
         ),
         bottomNavigationBar: Container(
           decoration: BoxDecoration(

@@ -9,24 +9,32 @@ import 'package:google_fonts/google_fonts.dart';
 
 import 'views/login/login.dart';
 
+bool? loggedIn;
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
 
   Auth auth = Auth();
 
-  bool loggedIn = auth.user.currentUser != null;
+  loggedIn = auth.user.currentUser != null;
   runApp(
-    MaterialApp(
+    MyApp(),
+  );
+
+// Ideal time to initialize
+}
+
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         textTheme: GoogleFonts.josefinSansTextTheme(),
         primarySwatch: Colors.blue,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: loggedIn ? Home() : LoginView(),
-    ),
-  );
-
-// Ideal time to initialize
+      home: loggedIn! ? Home() : LoginView(),
+    );
+  }
 }

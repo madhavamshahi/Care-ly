@@ -61,6 +61,7 @@ dev_dependencies:
   getwidget: ^3.0.1
   firebase_auth: ^3.6.4
   cloud_firestore: ^3.4.5
+  expansion_tile_card: ^2.0.0
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
