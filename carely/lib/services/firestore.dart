@@ -54,14 +54,15 @@ class Firestore {
     }
   }
 
-  Future addCheckIn({required Nurse nurse, required String uid}) async {
+  Future addCheckIn1({required Nurse nurse, required String uid}) async {
     CollectionReference ref = firestore.collection("checkin");
     Map map = nurse.toJson();
 
     map['uids'] = [nurse.uid, uid];
+
     var h = await ref
         .doc(auth.currentUser!.uid)
-        .set(nurse.toJson(), SetOptions(merge: true))
+        .set(map, SetOptions(merge: true))
         .onError((error, stackTrace) => error)
         .then((value) => null);
 
@@ -70,10 +71,10 @@ class Firestore {
     }
   }
 
-  Future<Map> getProfile(String uid) async {
+  Future<Map<String, dynamic>> getProfile(String uid) async {
     CollectionReference ref = firestore.collection("users");
     DocumentSnapshot doc = await ref.doc(uid).get();
 
-    return doc.data() as Map;
+    return doc.data() as Map<String, dynamic>;
   }
 }

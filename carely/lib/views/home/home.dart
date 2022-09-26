@@ -1,3 +1,4 @@
+import 'package:carely/services/firestore.dart';
 import 'package:carely/views/widgets/check_in_box.dart';
 import 'package:carely/views/widgets/userProfileView.dart';
 import 'package:flutter/material.dart';
@@ -112,14 +113,16 @@ class _HomeState extends State<Home> {
               GestureDetector(
                 onTap: () async {
                   if (await InternetConnectionChecker().hasConnection) {
-                    String data =
-                        await QrService().scanQR(); //json file as string
-                    var gg = jsonEncode(data);
-                    Map map = json.decode(data, reviver: (k, v) {
-                      return v;
-                    });
+                    String data = await QrService().scanQR();
+                    //json file as string
+                    Firestore _firestore = Firestore();
 
+                    Map<String, dynamic> map =
+                        await _firestore.getProfile(data);
                     print(map['phn']);
+                    await _firestore.addCheckIn1(
+                        nurse: Nurse.fromJson(map),
+                        uid: FirebaseAuth.instance.currentUser!.uid);
                   } else {
                     Builder(
                       builder: (context) => showInSnackBar(
@@ -165,7 +168,7 @@ class _HomeState extends State<Home> {
               Container(
                 margin: EdgeInsets.all(20),
                 child: Text(
-                  "After scanning their code, your profile will be shared to him/her while his/her profile will be shared to you.",
+                  "Scan the barcode to see who's looking after you ❤️",
                   style: TextStyle(
                     letterSpacing: 1.5,
                     color: Colors.black,
@@ -180,27 +183,55 @@ class _HomeState extends State<Home> {
         ),
       ),
     ),
-    SingleChildScrollView(
-      child: Column(
-        children: [
-          SizedBox(
-            height: 60,
-          ),
-          Text(
-            'Check-ins',
-            style: GoogleFonts.josefinSans(
-              textStyle: TextStyle(
-                fontSize: 25,
-                color: Colors.black,
-              ),
+    Column(
+      children: [
+        SizedBox(
+          height: 60,
+        ),
+        Text(
+          'Check-ins',
+          style: GoogleFonts.josefinSans(
+            textStyle: TextStyle(
+              fontSize: 25,
+              color: Colors.black,
             ),
           ),
-          SizedBox(
-            height: 50,
-          ),
-          Container(margin: EdgeInsets.all(15), child: CheckInBox()),
-        ],
-      ),
+        ),
+        SizedBox(
+          height: 50,
+        ),
+        Expanded(
+          child: StreamBuilder<QuerySnapshot>(
+              stream: FirebaseFirestore.instance
+                  .collection('checkin')
+                  .where('uids', arrayContainsAny: [
+                FirebaseAuth.instance.currentUser!.uid,
+              ]).snapshots(),
+              builder: (context, snapshot) {
+                if (!snapshot.hasData) {
+                  return Center(
+                    child: CircularProgressIndicator(),
+                  );
+                }
+
+                if (snapshot.hasData) {
+                  return ListView.builder(
+                      itemCount: snapshot.data!.docs.length,
+                      itemBuilder: (context, int n) {
+                        return Container(
+                            margin: EdgeInsets.all(15), child: CheckInBox());
+                      });
+                }
+                if (snapshot.hasError) {
+                  return Text(snapshot.error.toString());
+                }
+
+                return Center(
+                  child: CircularProgressIndicator(),
+                );
+              }),
+        ),
+      ],
     ),
     SingleChildScrollView(
       child: Column(

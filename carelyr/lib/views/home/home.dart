@@ -66,75 +66,55 @@ class _HomeState extends State<Home> {
       TextStyle(fontSize: 30, fontWeight: FontWeight.w600);
   List<Widget> _widgetOptions = <Widget>[
     SingleChildScrollView(
-      child: FutureBuilder<DocumentSnapshot>(
-          future:
-              Firestore().getProfile2(FirebaseAuth.instance.currentUser!.uid),
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return Center(child: CircularProgressIndicator());
-            }
-
-            if (snapshot.hasError) {
-              return Center(
-                child: Text(snapshot.error.toString()),
-              );
-            }
-            if (snapshot.hasData) {
-              Map data = snapshot.data!.data() as Map;
-
-              return Container(
-                margin: EdgeInsets.all(25),
-                child: Column(
-                  children: [
-                    Builder(builder: ((context) {
-                      return SizedBox(
-                          height: MediaQuery.of(context).size.height / 6.5);
-                    })),
-                    QrImage(
-                      data: data.toString(),
-                      version: QrVersions.auto,
-                      size: 280.0,
-                    ),
-                    SizedBox(height: 20),
-                    Builder(
-                      builder: ((context) {
-                        return GestureDetector(
-                          onTap: () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => RegisterComponent(
-                                        title: "Registratiuon")));
-                          },
-                          child: Center(
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: [
-                                Flexible(
-                                  child: Text(
-                                    "Scan code from patient's phone to check in.",
-                                    maxLines: 3,
-                                    style: TextStyle(
-                                      letterSpacing: 1.7,
-                                      fontFamily: "QuickSand",
-                                      fontSize: 20.5,
-                                      color: Color(0xFF1a2228),
-                                      fontWeight: FontWeight.w700,
-                                    ),
-                                  ),
-                                ),
-                              ],
+      child: Container(
+        margin: EdgeInsets.all(25),
+        child: Column(
+          children: [
+            Builder(builder: ((context) {
+              return SizedBox(height: MediaQuery.of(context).size.height / 6.5);
+            })),
+            QrImage(
+              data: FirebaseAuth.instance.currentUser!.uid.toString(),
+              version: QrVersions.auto,
+              size: 280.0,
+            ),
+            SizedBox(height: 20),
+            Builder(
+              builder: ((context) {
+                return GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) =>
+                                RegisterComponent(title: "Registratiuon")));
+                  },
+                  child: Center(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        Flexible(
+                          child: Text(
+                            "Scan code from patient's phone to check in.",
+                            maxLines: 3,
+                            style: TextStyle(
+                              letterSpacing: 1.7,
+                              fontFamily: "QuickSand",
+                              fontSize: 20.5,
+                              color: Color(0xFF1a2228),
+                              fontWeight: FontWeight.w700,
                             ),
                           ),
-                        );
-                      }),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
-              );
-            }
-            return Center(child: CircularProgressIndicator());
-          }),
+                  ),
+                );
+              }),
+            ),
+          ],
+        ),
+      ),
     ),
     SingleChildScrollView(
       child: Column(

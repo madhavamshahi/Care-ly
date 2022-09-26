@@ -2,6 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class CheckInBox extends StatelessWidget {
+  final String name;
+
+
+
+  
   CheckInBox({Key? key}) : super(key: key);
   List colors = [
     Color(0xFFffdf00),
